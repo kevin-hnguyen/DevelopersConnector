@@ -120,3 +120,79 @@ app.use("/api/users", require("./routes/api/users"));
 Pay close attention. The method here is `use` not `get`.
 Do the same thing for three other routes.
 We now can test the API endpoints with Postman: `localhost:5000/api/{users, auth, posts, profile}`
+#### 3.1 Create the User model
+Create a new folder `models`. Note that it is in plural since we will have mutiple models.
+The code for User model is as follows
+```
+const mongoose = require("mongoose");
+
+const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  avatar: {
+    type: String
+  },
+  date: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+module.exports = User = mongoose.model("user", UserSchema);
+```
+#### 3.2 POST route to create a new user
+Refer to the `routes/api/users.js` file earlier. We import 2 functions `check` and `validationResult` from the package `express-validator`
+```
+const { check, validationResult } = require("express-validator/check");
+```
+We edit the test route before to a real route to add a new user.
+```
+router.post(
+  "/",
+  [
+    check("name", "Name is required.")
+      .not()
+      .isEmpty(),
+    check("email", "Please enter a valid email.").isEmail(),
+    check(
+      "password",
+      "Please enter a password with at least 6 characters."
+    ).isLength({
+      min: 6
+    })
+  ],
+  (req, res) => {
+    // cast the err object from the inflow request
+    const errors = validationResult(req);
+    // check if there is error
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    // otherwise, everything is good
+    res.send("Users router");
+  }
+);
+```
+Pay attention to the 2nd parameter of the `post()` method: it is an array.
+The first element is check operation to test the presence of the `name` field of the form.
+The second element is a test the validitiy of the `email` field of the form.
+The last element is a test to make sure that password is at least 6 characters long.
+Next, let's see the 3rd parameter of `post()` method: an arrow function.
+We invoke the `validationResult()` upon the `req` object then cast the result to `errors`.
+If the `errors`, which is an array, is empty, then we are good to go, there is no error.
+Otherwise,
+```
+return res.status(400).json({ errors: errors.array() });
+```
+Finally, open Postman to test the user-creating route. And save a sample of valid POST request in the folder `users and auth`.

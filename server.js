@@ -13,6 +13,10 @@ const app = express();
 // connect to mongo database
 connectDB();
 
+// init middleware
+// body parser is now included within express => use it to access body of post request
+app.use(express.json({ extended: false }));
+
 app.get("/", (req, res) => res.send("API running..."));
 
 // bring in the routers
