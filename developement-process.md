@@ -95,3 +95,28 @@ connectDB();
 ```
 Run command `npm run server` to test connection.
 Commit changes to git.
+#### 2.4 Create route files for different routes
+Inside the root, create a folder `routes`. Inside of it, create another folder `api`. Inside `api`, create 4 files to deal with routing `users.js`, `auth.js`, `posts.js` and `profile.js`.
+This is what is inside `users.js`:
+```
+const express = require("express");
+const router = express.Router();
+
+/**
+ * @route       GET api/users
+ * @desc        Test route
+ * @access      Public
+ */
+router.get("/", (req, res) => res.send("Users router"));
+
+module.exports = router;
+```
+At this point, we just create a dummy route to test only.
+Back to `server.js`, we handle the users route to the `users.js` file with
+```
+// bring in the routers
+app.use("/api/users", require("./routes/api/users"));
+```
+Pay close attention. The method here is `use` not `get`.
+Do the same thing for three other routes.
+We now can test the API endpoints with Postman: `localhost:5000/api/{users, auth, posts, profile}`
