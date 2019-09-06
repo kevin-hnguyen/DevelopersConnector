@@ -1,4 +1,6 @@
 {
   "mongoURI": "mongodb+srv://hai:hai@devconnector-hkbyq.mongodb.net/test?retryWrites=true&w=majority",
-  "jwtsecret": "mysecrettoken"
+  "jwtsecret": "mysecrettoken",
+  "githubClientId": "3b8178d6905119b5d898",
+  "githubSecret": "e934faaf66fecf933a7535f9c474cb08f145040e"
 }
