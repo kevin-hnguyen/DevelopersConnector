@@ -24,8 +24,8 @@ router.get("/", authMiddleWare, async (req, res) => {
 });
 
 /**
- * @route       POST api/users
- * @desc        Authenticate user and get token
+ * @route       POST api/auth
+ * @desc        Authenticate user (login) and get token
  * @access      Public
  */
 router.post(
