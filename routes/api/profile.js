@@ -12,7 +12,7 @@ const Profile = require("../../models/Profile");
  * Given a token, displays a profile.
  * This route allows user to edit his information => protected route.
  * @route       GET api/profile/me
- * @desc        Get current user profile
+ * @desc        Get my own profile
  * @access      Private
  */
 router.get("/me", authMiddleWare, async (req, res) => {
@@ -345,7 +345,7 @@ router.delete("/education/:edu_id", authMiddleWare, async (req, res) => {
 });
 
 // @route    GET api/profile/github/:username
-// @desc     Get/display user repository from Github
+// @desc     Get/display user repositories from Github
 // @access   Public
 router.get("/github/:username", async (req, res) => {
   try {
