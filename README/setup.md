@@ -29,3 +29,8 @@ we will define a proxy in the `root/client/package.json` file:
 ```
 "proxy": "http://localhost:5000"
 ```
+Inside the `root/client/src` folder, we delete 4 files:
+1. `serviceWorker.js`
+2. `logo.svg`
+3. `index.css`
+4. `App.test.js`

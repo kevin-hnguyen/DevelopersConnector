@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Fragment } from "react";
+// bring in router for front-end
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+// import our custom components
+import Navbar from "./components/layouts/Navbar";
+import Landing from "./components/layouts/Landing";
+// import components for authorization
+import Login from "./components/auth/Login";
+import Register from "./components/auth/Register";
+import "./App.css";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Fragment>
+        <Navbar></Navbar>
+        <Route exact path="/" component={Landing} />
+        <section className="container">
+          <Switch>
+            <Route exact path="/register" component={Register}>
+              Register
+            </Route>
+            <Route exact path="/login" component={Login}>
+              Login
+            </Route>
+          </Switch>
+        </section>
+      </Fragment>
+    </Router>
   );
-}
+};
 
 export default App;
+
+// for the routing to work, wrap everything in the <Router>
