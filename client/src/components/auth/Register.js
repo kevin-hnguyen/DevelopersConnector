@@ -2,8 +2,12 @@ import React, { Fragment, useState } from "react";
 // request to back-end
 // import axios from "axios";
 import { Link } from "react-router-dom";
+// connect
+import { connect } from "react-redux";
+import { setAlert } from "../../actions/alert";
+import PropTypes from "prop-types";
 
-const Register = () => {
+const Register = ({ setAlert }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,7 +24,9 @@ const Register = () => {
   const onSubmit = async e => {
     e.preventDefault();
     if (password !== password2) {
-      console.log("Passwords do not match");
+      // console.log("Passwords do not match");
+      // call the setAlert in root/client/src/actions/alert.js
+      setAlert("Passwords do not match", "danger");
     } else {
       console.log("Registration Success!");
       // this whole process of making request to back-end will be implemented with redux
@@ -106,4 +112,11 @@ const Register = () => {
   );
 };
 
-export default Register;
+Register.propTypes = {
+  setAlert: PropTypes.func.isRequired
+}
+
+export default connect(
+  null,
+  { setAlert }
+)(Register);
