@@ -5,14 +5,19 @@ import Spinner from "../layouts/Spinner";
 import PropTypes from "prop-types";
 import { getProfileById } from "../../actions/profile";
 
-const Profile = ({ match, auth, getProfileById, profile: { profile, loading } }) => {
+const Profile = ({
+  match,
+  auth,
+  getProfileById,
+  profile: { profile, loading },
+}) => {
   // useEffect(() => getProfileById(match.params.id) , [getProfileById]);
   useEffect(() => {
     async function fetchData() {
       getProfileById(match.params.id);
     }
     fetchData();
-  }, []);
+  }, [getProfileById, match.params.id]);
 
   return (
     <Fragment>
