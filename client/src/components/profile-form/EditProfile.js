@@ -48,14 +48,15 @@ const EditProfile = ({
   }, [
     loading,
     getCurrentProfile,
-    profile.bio,
-    profile.company,
-    profile.website,
-    profile.location,
-    profile.status,
-    profile.skills,
-    profile.githubusername,
-    profile.social,
+    // Note: if we uncomment those, the form always restore its initial state.
+    // profile.bio,
+    // profile.company,
+    // profile.website,
+    // profile.location,
+    // profile.status,
+    // profile.skills,
+    // profile.githubusername,
+    // profile.social,
   ]);
 
   const {
