@@ -4,6 +4,11 @@ import { connect } from "react-redux";
 import Spinner from "../layouts/Spinner";
 import PropTypes from "prop-types";
 import { getProfileById } from "../../actions/profile";
+import ProfileTop from "./ProfileTop";
+import ProfileAbout from "./ProfileAbout";
+import ProfileExperience from "./ProfileExperience";
+import ProfileEducation from "./ProfileEducation";
+import ProfileGithub from "./ProfileGithub";
 
 const Profile = ({
   match,
@@ -29,14 +34,48 @@ const Profile = ({
             Go Back
           </Link>
           {auth.isAuthenticated &&
-          !auth.loading &&
-          auth.user._id === profile.user._id ? (
-            <Link to="/edit-profile" className="btn btn-dark">
-              Edit Profile
-            </Link>
-          ) : (
-            <div></div>
-          )}
+            !auth.loading &&
+            auth.user._id === profile.user._id && (
+              <Link to="/edit-profile" className="btn btn-dark">
+                Edit Profile
+              </Link>
+            )}
+          <div className="profile-grid my-2">
+            <ProfileTop profile={profile} />
+            <ProfileAbout profile={profile} />
+            <div className="profile-exp bg-white p-2">
+              <h2 className="text-primary">Experience</h2>
+              {profile.experience.length > 0 ? (
+                <Fragment>
+                  {profile.experience.map((each) => (
+                    <ProfileExperience
+                      key={each._id}
+                      experience={each}
+                    ></ProfileExperience>
+                  ))}
+                </Fragment>
+              ) : (
+                <h4>No experience credential.</h4>
+              )}
+              {profile.education.length > 0 ? (
+                <Fragment>
+                  {profile.education.map((each) => (
+                    <ProfileEducation
+                      key={each._id}
+                      education={each}
+                    ></ProfileEducation>
+                  ))}
+                </Fragment>
+              ) : (
+                <h4>No education credential.</h4>
+              )}
+            </div>
+            {
+              profile.githubusername && (
+                <ProfileGithub username={profile.githubusername} />
+              )
+            }
+          </div>
         </Fragment>
       )}
     </Fragment>
