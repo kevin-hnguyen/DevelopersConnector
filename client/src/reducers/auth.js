@@ -6,17 +6,19 @@ import {
   AUTH_ERROR,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
-  LOGOUT
+  LOGOUT,
+  DELETE_ACCOUNT,
 } from "../actions/type";
 
 const initialState = {
+  // instead of session storage, we use local storge to store token.
   token: localStorage.getItem("token"),
   // to render certain functionalities for authenticated users
   isAuthenticated: null,
   // request to back-end may take some time
   // once request gets back => false
   loading: true,
-  user: null
+  user: null,
 };
 
 export default function (state = initialState, action) {
@@ -27,7 +29,7 @@ export default function (state = initialState, action) {
         ...state,
         isAuthenticated: true,
         loading: false,
-        user: payload
+        user: payload,
       };
     }
     case REGISTER_SUCCESS:
@@ -41,13 +43,14 @@ export default function (state = initialState, action) {
     case REGISTER_FAIL:
     case AUTH_ERROR:
     case LOGIN_FAIL:
-    case LOGOUT: {
+    case LOGOUT:
+    case DELETE_ACCOUNT: {
       localStorage.removeItem("token");
       return {
         ...state,
         token: null,
         isAuthenticated: false,
-        loading: false
+        loading: false,
       };
     }
     default: {

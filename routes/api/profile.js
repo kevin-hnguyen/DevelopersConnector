@@ -7,6 +7,7 @@ const authMiddleWare = require("../../middleware/auth");
 
 const User = require("../../models/User");
 const Profile = require("../../models/Profile");
+const Post = require("../../models/Post");
 
 /**
  * Given a token, displays a profile.
@@ -21,17 +22,17 @@ router.get("/me", authMiddleWare, async (req, res) => {
     // 2. in the token, we attach the user.id to the request.
     // what is about the populate()? The avatar and name of an user is pertained to the user
     // not the profile => if we want to bring those fields in, use the populate()
-    const profile = await Profile.findOne({ user: req.user.id }).populate(
-      "user",
-      ["name", "avatar"]
-    );
+    const profile = await Profile.findOne({
+      user: req.user.id,
+    }).populate("user", ["name", "avatar"]);
     // check if there is a profile
     if (!profile) {
       return res
         .status(400)
         .json({ msg: "There is no profile for this user." });
     }
-    res.json({ profile });
+    // res.json({ profile });
+    res.json(profile);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Internal server error.");
@@ -49,19 +50,15 @@ router.post(
   [
     authMiddleWare,
     [
-      check("status", "Status is required.")
-        .not()
-        .isEmpty(),
-      check("skills", "Skills are required")
-        .not()
-        .isEmpty()
-    ]
+      check("status", "Status is required.").not().isEmpty(),
+      check("skills", "Skills are required").not().isEmpty(),
+    ],
   ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        errors: errors.array()
+        errors: errors.array(),
       });
     }
     const {
@@ -76,7 +73,7 @@ router.post(
       facebook,
       twitter,
       instagram,
-      linkedin
+      linkedin,
     } = req.body;
     // build profile fields, start with an empty object
     const profileFields = {};
@@ -88,7 +85,7 @@ router.post(
     if (status) profileFields.status = status;
     if (githubusername) profileFields.githubusername = githubusername;
     if (skills) {
-      profileFields.skills = skills.split(",").map(skill => skill.trim());
+      profileFields.skills = skills.split(",").map((skill) => skill.trim());
     }
     // build social object
     profileFields.social = {};
@@ -124,7 +121,7 @@ router.get("/", async (req, res) => {
     // Note: in the "models/User.js", we export the model as "users": module.exports = User = mongoose.model("users", UserSchema);
     // However, in the "models/Profile.js", we define a profile to have a property call "user"
     // the method populate() is called to insert into the field "user" of a profile several more properties!
-    const profiles = await Profile.find().populate("user", ["name", "avatar"]);
+    const profiles = await Profile.find().populate("user", ["_id", "name", "avatar"]);
     res.json(profiles);
   } catch (err) {
     console.error(err.message);
@@ -144,7 +141,7 @@ router.get("/user/:user_id", async (req, res) => {
     // However, in the "models/Profile.js", we define a profile to have a property call "user"
     // the method populate() is called to insert into the field "user" of a profile several more properties!
     const profile = await Profile.findOne({
-      user: req.params.user_id
+      user: req.params.user_id,
     }).populate("user", ["name", "avatar"]);
     if (!profile) {
       return res.status(400).json({ msg: "Profile not found." });
@@ -170,7 +167,7 @@ router.get("/user/:user_id", async (req, res) => {
 router.delete("/", authMiddleWare, async (req, res) => {
   try {
     // remove user's posts
-
+    await Post.deleteMany({ user: req.user.id });
     // remove the profile
     await Profile.findOneAndRemove({ user: req.user.id });
     // remove the user
@@ -192,16 +189,10 @@ router.put(
   [
     authMiddleWare,
     [
-      check("title", "Title is required")
-        .not()
-        .isEmpty(),
-      check("company", "Company is required")
-        .not()
-        .isEmpty(),
-      check("from", "From date is required")
-        .not()
-        .isEmpty()
-    ]
+      check("title", "Title is required").not().isEmpty(),
+      check("company", "Company is required").not().isEmpty(),
+      check("from", "From date is required").not().isEmpty(),
+    ],
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -216,7 +207,7 @@ router.put(
       from,
       to,
       current,
-      description
+      description,
     } = req.body;
 
     const newExp = {
@@ -226,7 +217,7 @@ router.put(
       from,
       to,
       current,
-      description
+      description,
     };
     try {
       let profile = await Profile.findOne({ user: req.user.id });
@@ -249,7 +240,7 @@ router.delete("/experience/:exp_id", authMiddleWare, async (req, res) => {
   try {
     const profile = await Profile.findOne({ user: req.user.id });
     const removeIndex = profile.experience
-      .map(item => item.id)
+      .map((item) => item.id)
       .indexOf(req.params.exp_id);
     profile.experience.splice(removeIndex, 1);
     await profile.save();
@@ -268,19 +259,11 @@ router.put(
   [
     authMiddleWare,
     [
-      check("school", "School is required")
-        .not()
-        .isEmpty(),
-      check("degree", "Degree is required")
-        .not()
-        .isEmpty(),
-      check("fieldofstudy", "Field of study is required")
-        .not()
-        .isEmpty(),
-      check("from", "From date is required")
-        .not()
-        .isEmpty()
-    ]
+      check("school", "School is required").not().isEmpty(),
+      check("degree", "Degree is required").not().isEmpty(),
+      check("fieldofstudy", "Field of study is required").not().isEmpty(),
+      check("from", "From date is required").not().isEmpty(),
+    ],
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -295,7 +278,7 @@ router.put(
       from,
       to,
       current,
-      description
+      description,
     } = req.body;
 
     const newEdu = {
@@ -305,7 +288,7 @@ router.put(
       from,
       to,
       current,
-      description
+      description,
     };
 
     try {
@@ -329,7 +312,7 @@ router.put(
 router.delete("/education/:edu_id", authMiddleWare, async (req, res) => {
   try {
     const foundProfile = await Profile.findOne({ user: req.user.id });
-    const eduIds = foundProfile.education.map(edu => edu._id.toString());
+    const eduIds = foundProfile.education.map((edu) => edu._id.toString());
     const removeIndex = eduIds.indexOf(req.params.edu_id);
     if (removeIndex === -1) {
       return res.status(500).json({ msg: "Server error" });
@@ -352,13 +335,13 @@ router.get("/github/:username", async (req, res) => {
     const options = {
       uri: `https://api.github.com/users/${
         req.params.username
-        }/repos?per_page=5&sort=created:asc&client_id=${config.get(
-          "githubClientId"
-        )}&client_secret=${config.get("githubSecret")}`,
+      }/repos?per_page=5&sort=created:asc&client_id=${config.get(
+        "githubClientId"
+      )}&client_secret=${config.get("githubSecret")}`,
       method: "GET",
       headers: {
-        "user-agent": "node.js"
-      }
+        "user-agent": "node.js",
+      },
     };
     request(options, (error, response, body) => {
       if (error) console.log(error);
